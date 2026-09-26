@@ -47,3 +47,4 @@ ddev import-files --source=backups/public_files.tar.gz
 ddev drush updatedb
 ddev drush cr
 ```
+# WeatherAppDrupalize-
