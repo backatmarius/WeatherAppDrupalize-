@@ -58,7 +58,7 @@ class WeatherPage extends ControllerBase {
     $style = (in_array($style, ['short', 'extended'])) ? $style : 'short';
 
 
-    $url = 'https://module-developer-guide-demo-site.ddev.site/modules/custom/anytown/data/weather_forecast.json';
+    $url = 'http://module-developer-guide-demo-site.ddev.site/modules/custom/anytown/data/weather_forecast.json';
     $forecast_data = $this->forecastClient->getForecastData($url);
 /*
     $data = NULL;
@@ -83,11 +83,9 @@ class WeatherPage extends ControllerBase {
     //   }
     //   $forecast .= '</ul>';
     // }
+    $rows = [];
     if ($forecast_data) {
-      $forecast = '<ul>';
-
-
-      $rows = [];
+      // $forecast = '<ul>';
 
       foreach ($forecast_data as $item) {
         [
@@ -98,29 +96,42 @@ class WeatherPage extends ControllerBase {
           'icon' => $icon,
         ] = $item;
 
-        $row[] = [
+        $rows[] = [
           $weekday,
           [
             'data' => [
-              '#markkup' => '<img src="https://openweathermap.org/img/wn/' . $icon . '@2x.png" alt="' . $description . '" title="' . $description . '" width="50" height="50"/>',
+              '#markup' => '<img alt="' . $description . '" src="' . $icon . '" width="200" height="200" />',
             ]
           ],
           [
             'data' => [
-              '#markup' => "<li>$weekday will be <em>$description</em> with a high of $high and a low of $low.</li>"
+              '#markup' => "<em>{$description}</em> with a high of {$high} and a low of {$low}",
             ]
           ]
         ];
         // $forecast .= "<li>$weekday will be <em>$description</em> with a high of $high and a low of $low.</li>";
 
       }
-      $forecast .= '</ul>';
+      // $forecast .= '</ul>';
+
+       $weather_forecast = [
+        '#type' => 'table',
+        '#header' => ['Day', '', 'Forecast'],
+        '#rows' => $rows,
+        '#attributes' => [
+          'class' => ['weather_page--forecast-table']
+        ]
+      ];
     }
     else {
-      $forecast = '<p>Weather data is currently unavailable.</p>';
+
+      $weather_forecast =[
+        '#type' => 'markup',
+        '#markup' => '<p>Weather data is currently unavailable.</p>'
+      ];
     }
 
-    $output = "<p>Check out this weekend's forecast and come prepared:</p>$forecast";
+    // $output = "<p>Check out this weekend's forecast and come prepared:</p>$forecast";
 
 /*
     $build['content'] = [
@@ -141,14 +152,17 @@ class WeatherPage extends ControllerBase {
         '#type' => 'markup',
         '#markup' => '<p>The weather forecast for this week is sunny with a chance of meatballs.</p>'
       ],
-      'weater_foreacts' => [
-        '#type' => 'table',
-      ],
-      'weather_closure' => [],
+      'weater_forecast' => $weather_forecast,
+      'weather_closure' => [
+        '#theme'  => 'item_list',
+        '#title' => 'Weather Related Closures',
+        '#items' => [
+          'The local swimming pool will be closed on Saturday due to maintenance.',
+          'The outdoor concert on Sunday has been postponed due to expected rain.'
+        ]
+      ]
     ];
 
-    return [
-      '#markup' => $output,
-    ];
+    return $build;
   }
 }
