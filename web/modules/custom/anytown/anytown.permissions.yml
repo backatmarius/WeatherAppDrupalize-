@@ -1,0 +1,9 @@
+manage weather forecast:
+  title: 'Manage weather forecasts'
+  description: 'Allows users to create, edit, and delete weather forecasts.'
+
+view weekly weather:
+  title: 'View weekly weather'
+  description: 'Allows the user to view the weekly weather at the market.'
+
+
